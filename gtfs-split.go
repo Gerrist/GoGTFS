@@ -1,8 +1,8 @@
 package main
 
 import (
-	"GTFS-tool/GTFS"
-	"GTFS-tool/util"
+	"github.com/Gerrist/GoGTFS/GTFS"
+	"github.com/Gerrist/GoGTFS/util"
 	"log"
 )
 
