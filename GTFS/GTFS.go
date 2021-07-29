@@ -1,8 +1,8 @@
 package GTFS
 
 import (
-	"GTFS-tool/util"
 	"encoding/csv"
+	"github.com/Gerrist/GoGTFS/util"
 	"log"
 	"os"
 )
