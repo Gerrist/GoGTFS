@@ -1,15 +1,13 @@
 package main
 
 import (
-	"github.com/Gerrist/GoGTFS/GTFS"
-	"github.com/Gerrist/GoGTFS/util"
 	"log"
 )
 
 func main() {
 	filterAgency := "TRANSDEV"
 
-	gtfs := GTFS.Store{}
+	gtfs := Store{}
 
 	log.Println("[Import]", "Importing agency.txt")
 	gtfs.ReadFile("agency", "./gtfs-data/agency.txt")
@@ -37,7 +35,7 @@ func main() {
 
 	log.Println("[Filter]", "Filtering GTFS with", filterAgency, "data")
 
-	newGtfs := GTFS.Store{}
+	newGtfs := Store{}
 
 	for _, agency := range gtfs.Agency {
 		if agency.Id == filterAgency {
@@ -57,7 +55,7 @@ func main() {
 	shapeIds := make([]int, 0)
 	serviceIds := make([]int, 0)
 	for _, trip := range gtfs.Trip {
-		if util.IndexOfInt(trip.RouteId, routeIds) > -1 {
+		if IndexOfInt(trip.RouteId, routeIds) > -1 {
 			newGtfs.Trip = append(newGtfs.Trip, trip)
 			tripIds = append(tripIds, trip.TripId)
 			serviceIds = append(serviceIds, trip.ServiceId)
@@ -66,27 +64,27 @@ func main() {
 	}
 
 	for _, calendarDate := range gtfs.CalendarDates {
-		if util.IndexOfInt(calendarDate.ServiceId, serviceIds) > -1 {
+		if IndexOfInt(calendarDate.ServiceId, serviceIds) > -1 {
 			newGtfs.CalendarDates = append(newGtfs.CalendarDates, calendarDate)
 		}
 	}
 
 	stopIds := make([]int, 0)
 	for _, stopTime := range gtfs.StopTime {
-		if util.IndexOfInt(stopTime.TripId, tripIds) > -1 {
+		if IndexOfInt(stopTime.TripId, tripIds) > -1 {
 			newGtfs.StopTime = append(newGtfs.StopTime, stopTime)
 			stopIds = append(stopIds, stopTime.StopId)
 		}
 	}
 
 	for _, stop := range gtfs.Stop {
-		if util.IndexOfInt(stop.Id, stopIds) > -1 {
+		if IndexOfInt(stop.Id, stopIds) > -1 {
 			newGtfs.Stop = append(newGtfs.Stop, stop)
 		}
 	}
 
 	for _, shape := range gtfs.Shape {
-		if util.IndexOfInt(shape.Id, shapeIds) > -1 {
+		if IndexOfInt(shape.Id, shapeIds) > -1 {
 			newGtfs.Shape = append(newGtfs.Shape, shape)
 		}
 	}
