@@ -1,4 +1,4 @@
-package main
+package GoGTFS
 
 import (
 	"encoding/csv"
