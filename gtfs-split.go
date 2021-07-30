@@ -1,11 +1,12 @@
-package GoGTFS
+package main
 
 import (
 	"log"
+	"os"
 )
 
 func main() {
-	filterAgency := "TRANSDEV"
+	filterAgency := os.Args[1:][0]
 
 	gtfs := Store{}
 
@@ -43,7 +44,7 @@ func main() {
 		}
 	}
 
-	routeIds := make([]int, 0)
+	routeIds := make([]string, 0)
 	for _, route := range gtfs.Route {
 		if route.AgencyId == filterAgency {
 			newGtfs.Route = append(newGtfs.Route, route)
@@ -51,11 +52,11 @@ func main() {
 		}
 	}
 
-	tripIds := make([]int, 0)
-	shapeIds := make([]int, 0)
-	serviceIds := make([]int, 0)
+	tripIds := make([]string, 0)
+	shapeIds := make([]string, 0)
+	serviceIds := make([]string, 0)
 	for _, trip := range gtfs.Trip {
-		if IndexOfInt(trip.RouteId, routeIds) > -1 {
+		if IndexOf(trip.RouteId, routeIds) > -1 {
 			newGtfs.Trip = append(newGtfs.Trip, trip)
 			tripIds = append(tripIds, trip.TripId)
 			serviceIds = append(serviceIds, trip.ServiceId)
@@ -64,27 +65,27 @@ func main() {
 	}
 
 	for _, calendarDate := range gtfs.CalendarDates {
-		if IndexOfInt(calendarDate.ServiceId, serviceIds) > -1 {
+		if IndexOf(calendarDate.ServiceId, serviceIds) > -1 {
 			newGtfs.CalendarDates = append(newGtfs.CalendarDates, calendarDate)
 		}
 	}
 
-	stopIds := make([]int, 0)
+	stopIds := make([]string, 0)
 	for _, stopTime := range gtfs.StopTime {
-		if IndexOfInt(stopTime.TripId, tripIds) > -1 {
+		if IndexOf(stopTime.TripId, tripIds) > -1 {
 			newGtfs.StopTime = append(newGtfs.StopTime, stopTime)
 			stopIds = append(stopIds, stopTime.StopId)
 		}
 	}
 
 	for _, stop := range gtfs.Stop {
-		if IndexOfInt(stop.Id, stopIds) > -1 {
+		if IndexOf(stop.Id, stopIds) > -1 {
 			newGtfs.Stop = append(newGtfs.Stop, stop)
 		}
 	}
 
 	for _, shape := range gtfs.Shape {
-		if IndexOfInt(shape.Id, shapeIds) > -1 {
+		if IndexOf(shape.Id, shapeIds) > -1 {
 			newGtfs.Shape = append(newGtfs.Shape, shape)
 		}
 	}

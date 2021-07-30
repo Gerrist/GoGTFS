@@ -1,4 +1,4 @@
-package GoGTFS
+package main
 
 import (
 	"fmt"
