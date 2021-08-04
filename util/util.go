@@ -1,7 +1,8 @@
-package GoGTFS
+package util
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -69,4 +70,11 @@ func CSVRow(data []interface{}) string { // custom CSV row generator as the go C
 	}
 
 	return strings.Join(row, ",") + "\n"
+}
+
+func DirectoryExists(path string) (bool) {
+	_, err := os.Stat(path)
+	if err == nil { return true }
+	if os.IsNotExist(err) { return false }
+	return false
 }

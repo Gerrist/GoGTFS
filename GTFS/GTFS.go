@@ -1,7 +1,8 @@
-package GoGTFS
+package GTFS
 
 import (
 	"encoding/csv"
+	"github.com/Gerrist/gtfs-cli/util"
 	"log"
 	"os"
 )
@@ -16,7 +17,7 @@ type Agency struct {
 
 func AgencyIndex(value string) int {
 	indices := []string{"agency_id", "agency_name", "agency_url", "agency_timezone", "agency_phone"}
-	return IndexOf(value, indices)
+	return util.IndexOf(value, indices)
 }
 
 type CalendarDate struct {
@@ -27,7 +28,7 @@ type CalendarDate struct {
 
 func CalendarDateIndex(value string) int {
 	indices := []string{"service_id", "date", "exception_type"}
-	return IndexOf(value, indices)
+	return util.IndexOf(value, indices)
 }
 
 type Route struct {
@@ -45,7 +46,7 @@ type Route struct {
 
 func RouteIndex(value string) int {
 	indices := []string{"route_id", "agency_id", "external_code", "route_short_name", "route_long_name", "route_desc", "route_type", "route_color", "route_text_color", "route_url"}
-	return IndexOf(value, indices)
+	return util.IndexOf(value, indices)
 }
 
 type Shape struct {
@@ -58,7 +59,7 @@ type Shape struct {
 
 func ShapeIndex(value string) int {
 	indices := []string{"shape_id", "shape_pt_sequence", "shape_pt_lat", "shape_pt_lon", "shape_dist_traveled"}
-	return IndexOf(value, indices)
+	return util.IndexOf(value, indices)
 }
 
 type StopTime struct {
@@ -77,7 +78,7 @@ type StopTime struct {
 
 func StopTimeIndex(value string) int {
 	indices := []string{"trip_id", "stop_sequence", "stop_id", "stop_headsign", "arrival_time", "departure_time", "pickup_type", "drop_off_type", "timepoint", "shape_dist_traveled", "fare_units_traveled"}
-	return IndexOf(value, indices)
+	return util.IndexOf(value, indices)
 }
 
 type Stop struct {
@@ -96,7 +97,7 @@ type Stop struct {
 
 func StopIndex(value string) int {
 	indices := []string{"stop_id", "stop_code", "stop_name", "stop_lat", "stop_lon", "location_type", "parent_station", "stop_timezone", "wheelchair_boarding", "platform_code", "zone_id"}
-	return IndexOf(value, indices)
+	return util.IndexOf(value, indices)
 }
 
 type Transfer struct {
@@ -111,7 +112,7 @@ type Transfer struct {
 
 func TransferIndex(value string) int {
 	indices := []string{"from_stop_id", "to_stop_id", "from_route_id", "to_route_id", "from_trip_id", "to_trip_id", "transfer_type"}
-	return IndexOf(value, indices)
+	return util.IndexOf(value, indices)
 }
 
 type Trip struct {
@@ -131,7 +132,7 @@ type Trip struct {
 
 func TripIndex(value string) int {
 	indices := []string{"route_id", "service_id", "trip_id", "realtime_trip_id", "trip_headsign", "trip_short_name", "trip_long_name", "direction_id", "block_id", "shape_id", "wheelchair_accessible", "bikes_allowed"}
-	return IndexOf(value, indices)
+	return util.IndexOf(value, indices)
 }
 
 type Store struct {
@@ -170,7 +171,7 @@ func (store *Store) ReadFile(fileType, filePath string) { // we need both fileTy
 				calendarDate := CalendarDate{
 					ServiceId:     line[CalendarDateIndex("service_id")],
 					Date:          line[CalendarDateIndex("date")],
-					ExceptionType: ParseInt(line[CalendarDateIndex("exception_type")]),
+					ExceptionType: util.ParseInt(line[CalendarDateIndex("exception_type")]),
 				}
 
 				store.CalendarDates = append(store.CalendarDates, calendarDate)
@@ -202,10 +203,10 @@ func (store *Store) ReadFile(fileType, filePath string) { // we need both fileTy
 			if i > 0 { // Skip header line
 				shape := Shape{
 					Id:           line[ShapeIndex("shape_id")],
-					PTSequence:   ParseInt(line[ShapeIndex("shape_pt_sequence")]),
-					Lat:          ParseFloat(line[ShapeIndex("shape_pt_lat")]),
-					Lon:          ParseFloat(line[ShapeIndex("shape_pt_lon")]),
-					DistTraveled: ParseInt(line[ShapeIndex("shape_dist_traveled")]),
+					PTSequence:   util.ParseInt(line[ShapeIndex("shape_pt_sequence")]),
+					Lat:          util.ParseFloat(line[ShapeIndex("shape_pt_lat")]),
+					Lon:          util.ParseFloat(line[ShapeIndex("shape_pt_lon")]),
+					DistTraveled: util.ParseInt(line[ShapeIndex("shape_dist_traveled")]),
 				}
 
 				store.Shape = append(store.Shape, shape)
@@ -217,16 +218,16 @@ func (store *Store) ReadFile(fileType, filePath string) { // we need both fileTy
 			if i > 0 { // Skip header line
 				stopTime := StopTime{
 					TripId:            line[StopTimeIndex("trip_id")],
-					Sequence:          ParseInt(line[StopTimeIndex("stop_sequence")]),
+					Sequence:          util.ParseInt(line[StopTimeIndex("stop_sequence")]),
 					StopId:            line[StopTimeIndex("stop_id")],
 					StopHeadsign:      line[StopTimeIndex("stop_headsign")],
 					ArrivalTime:       line[StopTimeIndex("arrival_time")],
 					DepartureTime:     line[StopTimeIndex("departure_time")],
-					PickUpType:        ParseInt(line[StopTimeIndex("pickup_type")]),
-					DropOffType:       ParseInt(line[StopTimeIndex("drop_off_type")]),
-					Timepoint:         ParseInt(line[StopTimeIndex("timepoint")]),
-					ShapeDistTraveled: ParseInt(line[StopTimeIndex("shape_dist_traveled")]),
-					FareUnitsTraveled: ParseInt(line[StopTimeIndex("fare_units_traveled")]),
+					PickUpType:        util.ParseInt(line[StopTimeIndex("pickup_type")]),
+					DropOffType:       util.ParseInt(line[StopTimeIndex("drop_off_type")]),
+					Timepoint:         util.ParseInt(line[StopTimeIndex("timepoint")]),
+					ShapeDistTraveled: util.ParseInt(line[StopTimeIndex("shape_dist_traveled")]),
+					FareUnitsTraveled: util.ParseInt(line[StopTimeIndex("fare_units_traveled")]),
 				}
 
 				store.StopTime = append(store.StopTime, stopTime)
@@ -240,12 +241,12 @@ func (store *Store) ReadFile(fileType, filePath string) { // we need both fileTy
 					Id:                 line[StopIndex("stop_id")],
 					Code:               line[StopIndex("stop_code")],
 					Name:               line[StopIndex("stop_name")],
-					Lat:                ParseFloat(line[StopIndex("stop_lat")]),
-					Lon:                ParseFloat(line[StopIndex("stop_lon")]),
-					LocationType:       ParseInt(line[StopIndex("location_type")]),
+					Lat:                util.ParseFloat(line[StopIndex("stop_lat")]),
+					Lon:                util.ParseFloat(line[StopIndex("stop_lon")]),
+					LocationType:       util.ParseInt(line[StopIndex("location_type")]),
 					ParentStation:      line[StopIndex("parent_station")],
 					StopTimezone:       line[StopIndex("stop_timezone")],
-					WheelchairBoarding: ParseInt(line[StopIndex("wheelchair_boarding")]),
+					WheelchairBoarding: util.ParseInt(line[StopIndex("wheelchair_boarding")]),
 					PlatformCode:       line[StopIndex("platform_code")],
 					ZoneId:             line[StopIndex("zone_id")],
 				}
@@ -264,7 +265,7 @@ func (store *Store) ReadFile(fileType, filePath string) { // we need both fileTy
 					ToRouteId:    line[TransferIndex("to_route_id")],
 					FromTripId:   line[TransferIndex("from_trip_id")],
 					ToTripId:     line[TransferIndex("to_trip_id")],
-					TransferType: ParseInt(line[TransferIndex("transfer_type")]),
+					TransferType: util.ParseInt(line[TransferIndex("transfer_type")]),
 				}
 
 				store.Transfer = append(store.Transfer, transfer)
@@ -282,11 +283,11 @@ func (store *Store) ReadFile(fileType, filePath string) { // we need both fileTy
 					TripHeadsign:         line[TripIndex("trip_headsign")],
 					TripShortName:        line[TripIndex("trip_short_name")],
 					TripLongName:         line[TripIndex("trip_long_name")],
-					DirectionId:          ParseInt(line[TripIndex("direction_id")]),
-					BlockId:              ParseInt(line[TripIndex("block_id")]),
+					DirectionId:          util.ParseInt(line[TripIndex("direction_id")]),
+					BlockId:              util.ParseInt(line[TripIndex("block_id")]),
 					ShapeId:              line[TripIndex("shape_id")],
-					WheelchairAccessible: ParseInt(line[TripIndex("wheelchair_accessible")]),
-					BikesAllowed:         ParseInt(line[TripIndex("bikes_allowed")]),
+					WheelchairAccessible: util.ParseInt(line[TripIndex("wheelchair_accessible")]),
+					BikesAllowed:         util.ParseInt(line[TripIndex("bikes_allowed")]),
 				}
 
 				store.Trip = append(store.Trip, trip)
@@ -310,7 +311,7 @@ func (store *Store) Export(exportName string) {
 
 	os.Remove(exportName + "/stops.txt")
 	stopsFile, _ := os.OpenFile(exportName+"/stops.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	stopsFile.WriteString(CSVRow([]interface{}{"stop_id", "stop_code", "stop_name", "stop_lat", "stop_lon", "location_type", "parent_station", "stop_timezone", "wheelchair_boarding", "platform_code", "zone_id"}))
+	stopsFile.WriteString(util.CSVRow([]interface{}{"stop_id", "stop_code", "stop_name", "stop_lat", "stop_lon", "location_type", "parent_station", "stop_timezone", "wheelchair_boarding", "platform_code", "zone_id"}))
 	for _, stop := range store.Stop {
 		var row = []interface{}{}
 		row = append(row, stop.Id)
@@ -325,12 +326,12 @@ func (store *Store) Export(exportName string) {
 		row = append(row, stop.PlatformCode)
 		row = append(row, stop.ZoneId)
 
-		stopsFile.WriteString(CSVRow(row))
+		stopsFile.WriteString(util.CSVRow(row))
 	}
 
 	os.Remove(exportName + "/agency.txt")
 	agencyFile, _ := os.OpenFile(exportName+"/agency.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	agencyFile.WriteString(CSVRow([]interface{}{"agency_id", "agency_name", "agency_url", "agency_timezone", "agency_phone"}))
+	agencyFile.WriteString(util.CSVRow([]interface{}{"agency_id", "agency_name", "agency_url", "agency_timezone", "agency_phone"}))
 	for _, agency := range store.Agency {
 		var row = []interface{}{}
 		row = append(row, agency.Id)
@@ -339,24 +340,24 @@ func (store *Store) Export(exportName string) {
 		row = append(row, agency.Timezone)
 		row = append(row, agency.Phone)
 
-		agencyFile.WriteString(CSVRow(row))
+		agencyFile.WriteString(util.CSVRow(row))
 	}
 
 	os.Remove(exportName + "/calendar_dates.txt")
 	calendarFile, _ := os.OpenFile(exportName+"/calendar_dates.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	calendarFile.WriteString(CSVRow([]interface{}{"service_id", "date", "exception_type"}))
+	calendarFile.WriteString(util.CSVRow([]interface{}{"service_id", "date", "exception_type"}))
 	for _, calendarDate := range store.CalendarDates {
 		var row = []interface{}{}
 		row = append(row, calendarDate.ServiceId)
 		row = append(row, calendarDate.Date)
 		row = append(row, calendarDate.ExceptionType)
 
-		calendarFile.WriteString(CSVRow(row))
+		calendarFile.WriteString(util.CSVRow(row))
 	}
 
 	os.Remove(exportName + "/routes.txt")
 	routesFile, _ := os.OpenFile(exportName+"/routes.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	routesFile.WriteString(CSVRow([]interface{}{"route_id", "agency_id", "external_code", "route_short_name", "route_long_name", "route_desc", "route_type", "route_color", "route_text_color", "route_url"}))
+	routesFile.WriteString(util.CSVRow([]interface{}{"route_id", "agency_id", "external_code", "route_short_name", "route_long_name", "route_desc", "route_type", "route_color", "route_text_color", "route_url"}))
 	for _, route := range store.Route {
 		var row = []interface{}{}
 		row = append(row, route.RouteId)
@@ -370,12 +371,12 @@ func (store *Store) Export(exportName string) {
 		row = append(row, route.RouteTextColor)
 		row = append(row, route.RouteURL)
 
-		routesFile.WriteString(CSVRow(row))
+		routesFile.WriteString(util.CSVRow(row))
 	}
 
 	os.Remove(exportName + "/shapes.txt")
 	shapesFile, _ := os.OpenFile(exportName+"/shapes.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	shapesFile.WriteString(CSVRow([]interface{}{"shape_id", "shape_pt_sequence", "shape_pt_lat", "shape_pt_lon", "shape_dist_traveled"}))
+	shapesFile.WriteString(util.CSVRow([]interface{}{"shape_id", "shape_pt_sequence", "shape_pt_lat", "shape_pt_lon", "shape_dist_traveled"}))
 	for _, shape := range store.Shape {
 		var row = []interface{}{}
 		row = append(row, shape.Id)
@@ -384,12 +385,12 @@ func (store *Store) Export(exportName string) {
 		row = append(row, shape.Lon)
 		row = append(row, shape.DistTraveled)
 
-		shapesFile.WriteString(CSVRow(row))
+		shapesFile.WriteString(util.CSVRow(row))
 	}
 
 	os.Remove(exportName + "/stop_times.txt")
 	stopTimesFile, _ := os.OpenFile(exportName+"/stop_times.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	stopTimesFile.WriteString(CSVRow([]interface{}{"trip_id", "stop_sequence", "stop_id", "stop_headsign", "arrival_time", "departure_time", "pickup_type", "drop_off_type", "timepoint", "shape_dist_traveled", "fare_units_traveled"}))
+	stopTimesFile.WriteString(util.CSVRow([]interface{}{"trip_id", "stop_sequence", "stop_id", "stop_headsign", "arrival_time", "departure_time", "pickup_type", "drop_off_type", "timepoint", "shape_dist_traveled", "fare_units_traveled"}))
 	for _, stopTime := range store.StopTime {
 		var row = []interface{}{}
 		row = append(row, stopTime.TripId)
@@ -404,12 +405,12 @@ func (store *Store) Export(exportName string) {
 		row = append(row, stopTime.ShapeDistTraveled)
 		row = append(row, stopTime.FareUnitsTraveled)
 
-		stopTimesFile.WriteString(CSVRow(row))
+		stopTimesFile.WriteString(util.CSVRow(row))
 	}
 
 	os.Remove(exportName + "/transfers.txt")
 	transfersFile, _ := os.OpenFile(exportName+"/transfers.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	transfersFile.WriteString(CSVRow([]interface{}{"from_stop_id", "to_stop_id", "from_route_id", "to_route_id", "from_trip_id", "to_trip_id", "transfer_type"}))
+	transfersFile.WriteString(util.CSVRow([]interface{}{"from_stop_id", "to_stop_id", "from_route_id", "to_route_id", "from_trip_id", "to_trip_id", "transfer_type"}))
 	for _, stop := range store.Transfer {
 		var row = []interface{}{}
 		row = append(row, stop.FromStopId)
@@ -422,12 +423,12 @@ func (store *Store) Export(exportName string) {
 		row = append(row, stop.ToTripId)
 		row = append(row, stop.TransferType)
 
-		transfersFile.WriteString(CSVRow(row))
+		transfersFile.WriteString(util.CSVRow(row))
 	}
 
 	os.Remove(exportName + "/trips.txt")
 	tripsFile, _ := os.OpenFile(exportName+"/trips.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	tripsFile.WriteString(CSVRow([]interface{}{"route_id", "service_id", "trip_id", "realtime_trip_id", "trip_headsign", "trip_short_name", "trip_long_name", "direction_id", "block_id", "shape_id", "wheelchair_accessible", "bikes_allowed"}))
+	tripsFile.WriteString(util.CSVRow([]interface{}{"route_id", "service_id", "trip_id", "realtime_trip_id", "trip_headsign", "trip_short_name", "trip_long_name", "direction_id", "block_id", "shape_id", "wheelchair_accessible", "bikes_allowed"}))
 	for _, trip := range store.Trip {
 		var row = []interface{}{}
 		row = append(row, trip.RouteId)
@@ -443,6 +444,6 @@ func (store *Store) Export(exportName string) {
 		row = append(row, trip.WheelchairAccessible)
 		row = append(row, trip.BikesAllowed)
 
-		tripsFile.WriteString(CSVRow(row))
+		tripsFile.WriteString(util.CSVRow(row))
 	}
 }
